@@ -1,0 +1,41 @@
+[package]
+name = "traitful"
+version = "0.1.0"
+license = "Apache-2.0 OR BSL-1.0 OR MIT"
+description = "A collection of helper macros for trait patterns"
+repository = "https://github.com/ardaku/traitful"
+documentation = "https://docs.rs/traitful"
+homepage = "https://github.com/ardaku/traitful/blob/stable/CHANGELOG.md"
+include = [
+    "/LICENSE_APACHE",
+    "/LICENSE_BOOST",
+    "/LICENSE_MIT",
+    "/README.md",
+    "/examples/doc/",
+    "/src/",
+]
+categories = ["rust-patterns"]
+keywords = ["traits", "seal", "extension", "sealed", "macro"]
+readme = "README.md"
+edition = "2021"
+
+[lib]
+proc-macro = true
+
+[dependencies.syn]
+version = "2.0"
+default-features = false
+features = [
+    "full",
+    "parsing",
+    "proc-macro",
+    "printing",
+    "extra-traits",
+    "clone-impls",
+]
+
+[dependencies.proc-macro2]
+version = "1.0"
+
+[dependencies.quote]
+version = "1.0"
