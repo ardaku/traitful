@@ -40,6 +40,23 @@ use proc_macro::TokenStream;
 /// # }
 /// ```
 /// 
+/// ## Generics
+/// You can also seal traits with generics
+/// ```rust
+/// # mod generics {
+#[doc = include_str!("../examples/doc/generics.rs")]
+/// # }
+/// ```
+/// 
+/// ## Generics with `for` syntax
+/// You can also seal traits to types with generics without adding them to the
+/// trait by using the `for` syntax.
+/// ```rust
+/// # mod maybe_generic {
+#[doc = include_str!("../examples/doc/maybe_generic.rs")]
+/// # }
+/// ```
+/// 
 /// [Rust API Guidelines]: https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed
 #[proc_macro_attribute]
 pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
