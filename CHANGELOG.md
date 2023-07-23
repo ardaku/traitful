@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 ## [0.2.0] - Unreleased
 ### Changed
  - `#[extend]` API to operate on traits rather than impls
+ - Improved documentation for `#[extend]`
 
 ## [0.1.0] - 2023-07-23
 ### Added
