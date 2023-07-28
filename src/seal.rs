@@ -193,10 +193,10 @@ pub(super) fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
             }
         }
 
-        stream.extend(proc_macro2::TokenStream::from(quote::quote! {
+        stream.extend(quote::quote! {
             impl #generic_params #trait_generics super::Seal #trait_generics
                 for #type_ {}
-        }));
+        });
     }
 
     let seal_generics = {
