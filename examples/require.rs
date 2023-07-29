@@ -8,7 +8,7 @@ pub trait Clonable:
     fn uwu(&self);
 
     /// Clone and box
-    // TODO: `fn clone_boxed(&self: impl Clone + 'static) -> Box<dyn Clonable>`
+    // TODO: `fn clone_boxed(self: &impl Clone + 'static) -> Box<dyn Clonable>`
     fn clone_boxed(&self) -> Box<dyn Clonable> {
         <Self as clonable_traitful_require__::Require<
             clonable_traitful_require__::traits::Clone,

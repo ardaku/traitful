@@ -5,7 +5,7 @@
     html_favicon_url = "https://ardaku.github.io/mm/icon.svg",
     html_root_url = "https://docs.rs/traitful"
 )]
-#![forbid(missing_docs)]
+#![forbid(unsafe_code, missing_docs)]
 #![warn(
     anonymous_parameters,
     missing_copy_implementations,
