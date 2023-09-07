@@ -21,6 +21,7 @@
     variant_size_differences
 )]
 
+mod common;
 mod extend;
 mod seal;
 
@@ -60,7 +61,7 @@ use proc_macro::TokenStream;
 /// [Rust API Guidelines]: https://rust-lang.github.io/api-guidelines/future-proofing.html#sealed-traits-protect-against-downstream-implementations-c-sealed
 #[proc_macro_attribute]
 pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
-    self::seal::seal(attr, item)
+    self::common::unwrap(self::seal::seal(attr.into(), item.into()))
 }
 
 /// Make a trait an extension of a struct's functionality.
@@ -89,5 +90,5 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// [RFC-0445]: https://rust-lang.github.io/rfcs/0445-extension-trait-conventions.html
 #[proc_macro_attribute]
 pub fn extend(attr: TokenStream, item: TokenStream) -> TokenStream {
-    self::extend::extend(attr, item)
+    self::common::unwrap(self::extend::extend(attr.into(), item.into()))
 }

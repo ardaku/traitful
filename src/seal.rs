@@ -1,4 +1,4 @@
-use proc_macro::TokenStream;
+use proc_macro2::TokenStream;
 use syn::{
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
@@ -75,9 +75,12 @@ impl Parse for AttrParams {
     }
 }
 
-pub(super) fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub(super) fn seal(
+    attr: TokenStream,
+    item: TokenStream,
+) -> Result<TokenStream> {
     let trait_ = item;
-    let mut trait_ = syn::parse_macro_input!(trait_ as ItemTrait);
+    let mut trait_: ItemTrait = syn::parse2(trait_)?;
     let trait_ident = trait_.ident.clone();
     let trait_generics = trait_.generics.clone();
     let seal_ident = proc_macro2::Ident::new(
@@ -171,8 +174,8 @@ pub(super) fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
         },
     }));
 
-    let attr = syn::parse_macro_input!(attr as AttrParams);
-    let mut stream = proc_macro2::TokenStream::new();
+    let attr: AttrParams = syn::parse2(attr)?;
+    let mut stream = TokenStream::new();
 
     for param in attr.types.into_iter() {
         let type_ = &param.type_;
@@ -217,7 +220,7 @@ pub(super) fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
         seal_generics
     };
 
-    quote::quote! {
+    Ok(quote::quote! {
         #trait_
 
         #[doc(hidden)]
@@ -237,6 +240,5 @@ pub(super) fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
                 #stream
             }
         }
-    }
-    .into()
+    })
 }

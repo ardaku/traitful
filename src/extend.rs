@@ -1,12 +1,11 @@
-use proc_macro::TokenStream;
-use proc_macro2::Span;
+use proc_macro2::{Span, TokenStream};
 use syn::{
     parse::Error,
     punctuated::Punctuated,
     token::{Brace, For, Gt, Impl, Lt},
     AngleBracketedGenericArguments, Expr, ExprPath, GenericArgument,
     GenericParam, Generics, ImplItem, ImplItemFn, ItemImpl, ItemTrait, Path,
-    PathArguments, PathSegment, TraitItem, Type, TypePath, Visibility,
+    PathArguments, PathSegment, Result, TraitItem, Type, TypePath, Visibility,
 };
 
 /// Create a generic argument from a generic parameter
@@ -43,8 +42,11 @@ fn generic_arg(generic_param: GenericParam) -> GenericArgument {
     }
 }
 
-pub(super) fn extend(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let type_ = syn::parse_macro_input!(attr as Type);
+pub(super) fn extend(
+    attr: TokenStream,
+    item: TokenStream,
+) -> Result<TokenStream> {
+    let type_: Type = syn::parse2(attr)?;
     let mut impl_ = ItemImpl {
         attrs: Vec::new(),
         defaultness: None,
@@ -59,7 +61,7 @@ pub(super) fn extend(attr: TokenStream, item: TokenStream) -> TokenStream {
         items: Vec::new(),
     };
     let trait_ = {
-        let mut trait_ = syn::parse_macro_input!(item as ItemTrait);
+        let mut trait_: ItemTrait = syn::parse2(item)?;
         let ident = trait_.ident.clone();
 
         impl_.trait_ = Some((
@@ -98,9 +100,10 @@ pub(super) fn extend(attr: TokenStream, item: TokenStream) -> TokenStream {
                 continue;
             };
             let Some(block) = fn_.default.take() else {
-                return Error::new(Span::call_site(), "Method block required")
-                    .into_compile_error()
-                    .into();
+                return Err(Error::new(
+                    Span::call_site(),
+                    "Method block required",
+                ));
             };
 
             impl_.items.push(ImplItem::Fn(ImplItemFn {
@@ -117,11 +120,10 @@ pub(super) fn extend(attr: TokenStream, item: TokenStream) -> TokenStream {
 
     impl_.generics = trait_.generics.clone();
 
-    quote::quote! {
+    Ok(quote::quote! {
         #[::traitful::seal(#type_)]
         #trait_
 
         #impl_
-    }
-    .into()
+    })
 }
