@@ -2,12 +2,14 @@ use proc_macro2::TokenStream;
 use syn::{
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
-    token::{Gt, Lt},
+    token::{Comma, Gt, Lt},
     AngleBracketedGenericArguments, Expr, ExprPath, GenericArgument,
     GenericParam, Generics, ItemTrait, Path, PathArguments, PathSegment,
     Result, Token, TraitBound, TraitBoundModifier, Type, TypeParam,
     TypeParamBound, TypePath,
 };
+
+use crate::common;
 
 struct BoundGenerics {
     _for_token: Token![for],
@@ -176,6 +178,11 @@ pub(super) fn seal(
 
     let attr: AttrParams = syn::parse2(attr)?;
     let mut stream = TokenStream::new();
+    let mut trait_args: Punctuated<GenericArgument, Comma> = Punctuated::new();
+
+    for trait_generic in trait_generics.params.iter().cloned() {
+        trait_args.push(common::generic_arg(trait_generic));
+    }
 
     for param in attr.types.into_iter() {
         let type_ = &param.type_;
@@ -197,7 +204,7 @@ pub(super) fn seal(
         }
 
         stream.extend(quote::quote! {
-            impl #generic_params #trait_generics super::Seal #trait_generics
+            impl #generic_params #trait_generics super::Seal<#trait_args>
                 for #type_ {}
         });
     }
@@ -226,13 +233,13 @@ pub(super) fn seal(
         #[doc(hidden)]
         pub(crate) mod #seal_ident {
             #[doc(hidden)]
-            pub trait Seal #trait_generics: self::Sealed #trait_generics {}
+            pub trait Seal #trait_generics: self::Sealed<#trait_args> {}
             #[doc(hidden)]
             pub trait Sealed #trait_generics {}
 
-            impl #seal_generics self::Sealed #trait_generics
+            impl #seal_generics self::Sealed<#trait_args>
                 for T_traitful_seal__
-                where T_traitful_seal__: super::#trait_ident #trait_generics {}
+                where T_traitful_seal__: super::#trait_ident<#trait_args> {}
 
             mod impl_traitful_seal__ {
                 pub use super::super::*;

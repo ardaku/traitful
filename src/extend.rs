@@ -75,12 +75,15 @@ pub(super) fn extend(
                     "Method block required",
                 ));
             };
+            let sig = fn_.sig.clone();
+
+            common::remove_arg_patterns(&mut fn_.sig);
 
             impl_.items.push(ImplItem::Fn(ImplItemFn {
                 attrs: Vec::new(),
                 vis: Visibility::Inherited,
                 defaultness: None,
-                sig: fn_.sig.clone(),
+                sig,
                 block,
             }));
         }
