@@ -1,4 +1,4 @@
-use proc_macro2::TokenStream;
+use proc_macro2::{Span, TokenStream};
 use syn::{
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
@@ -33,7 +33,7 @@ pub(super) fn seal(
     let trait_generics = trait_.generics.clone();
     let seal_ident = proc_macro2::Ident::new(
         &format!("{trait_ident}_traitful_seal__"),
-        proc_macro2::Span::call_site(),
+        Span::call_site(),
     );
 
     trait_.supertraits.push(TypeParamBound::Trait(TraitBound {
@@ -99,10 +99,7 @@ pub(super) fn seal(
                 };
 
                 path.push(PathSegment {
-                    ident: proc_macro2::Ident::new(
-                        "self",
-                        proc_macro2::Span::call_site(),
-                    ),
+                    ident: proc_macro2::Ident::new("self", Span::call_site()),
                     arguments: PathArguments::None,
                 });
                 path.push(PathSegment {
@@ -110,10 +107,7 @@ pub(super) fn seal(
                     arguments: PathArguments::None,
                 });
                 path.push(PathSegment {
-                    ident: proc_macro2::Ident::new(
-                        "Seal",
-                        proc_macro2::Span::call_site(),
-                    ),
+                    ident: proc_macro2::Ident::new("Seal", Span::call_site()),
                     arguments,
                 });
 
@@ -134,11 +128,11 @@ pub(super) fn seal(
         let type_ = &param.type_;
         let mut generic_params = Generics {
             lt_token: Some(Lt {
-                spans: [proc_macro2::Span::call_site()],
+                spans: [Span::call_site()],
             }),
             params: Punctuated::new(),
             gt_token: Some(Gt {
-                spans: [proc_macro2::Span::call_site()],
+                spans: [Span::call_site()],
             }),
             where_clause: None,
         };
@@ -162,7 +156,7 @@ pub(super) fn seal(
             attrs: Vec::new(),
             ident: proc_macro2::Ident::new(
                 "T_traitful_seal__",
-                proc_macro2::Span::call_site(),
+                Span::call_site(),
             ),
             colon_token: None,
             bounds: Punctuated::new(),

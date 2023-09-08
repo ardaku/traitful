@@ -30,6 +30,7 @@ use proc_macro::TokenStream;
 /// Seal a trait.
 ///
 /// # Sealed Traits
+///
 /// Sealed traits are documented in the [Rust API Guidelines] as a way to
 /// prevent downstream implementations while providing a public trait API.  This
 /// implementation enforces that the trait is implemented for the exact set of
@@ -42,7 +43,8 @@ use proc_macro::TokenStream;
 /// ```
 /// 
 /// ## Generics
-/// You can also seal traits with generics
+///
+/// You can also seal traits with generics:
 /// ```rust
 /// # mod generics {
 #[doc = include_str!("../examples/doc/generics.rs")]
@@ -50,6 +52,7 @@ use proc_macro::TokenStream;
 /// ```
 /// 
 /// ## Generics with `for` syntax
+///
 /// You can also seal traits to types with generics without adding them to the
 /// trait by using the `for` syntax.
 /// ```rust
@@ -64,9 +67,10 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
     self::common::unwrap(self::seal::seal(attr.into(), item.into()))
 }
 
-/// Make a trait an extension of a struct or another trait's functionality.
+/// Make a trait an extension of a type or another trait's functionality.
 ///
 /// # Extension Traits
+///
 /// Extension traits are documented in [RFC-0445] as a way to extend
 /// functionality of structs defined in upstream crates.  The new methods are
 /// called "Extension methods".  This implementation enforces that extension
@@ -79,6 +83,7 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 /// 
 /// ## Generics
+///
 /// You can also make extension traits on types with generics by adding the
 /// generic parameter to the trait definition:
 /// ```rust
@@ -88,11 +93,21 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```
 /// 
 /// ## Generics with `for` syntax
+///
 /// You can also make extension traits on types with generics without adding
 /// them to the trait by using the `for` syntax.
 /// ```rust
 /// # mod iter_ext {
 #[doc = include_str!("../examples/doc/iter_ext.rs")]
+/// # }
+/// ```
+/// 
+/// ## Extend a trait
+/// When extending traits, you can infer the `for<T: Trait + Other> T` from the
+/// supertraits.
+/// ```rust
+/// # mod infer {
+#[doc = include_str!("../examples/doc/infer.rs")]
 /// # }
 /// ```
 /// 

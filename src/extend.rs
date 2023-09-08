@@ -3,8 +3,9 @@ use syn::{
     parse::Error,
     punctuated::Punctuated,
     token::{Brace, For, Gt, Impl, Lt},
-    AngleBracketedGenericArguments, ImplItem, ImplItemFn, ItemImpl, ItemTrait,
-    Path, PathArguments, PathSegment, Result, TraitItem, Visibility,
+    AngleBracketedGenericArguments, GenericParam, Ident, ImplItem, ImplItemFn,
+    ItemImpl, ItemTrait, Path, PathArguments, PathSegment, Result, TraitItem,
+    Type, TypeParam, TypePath, Visibility,
 };
 
 use crate::common::{self, BoundGenericsType};
@@ -13,7 +14,44 @@ pub(super) fn extend(
     attr: TokenStream,
     item: TokenStream,
 ) -> Result<TokenStream> {
-    let type_: BoundGenericsType = syn::parse2(attr)?;
+    let mut trait_: ItemTrait = syn::parse2(item)?;
+
+    let type_: BoundGenericsType = if attr.is_empty() {
+        if trait_.generics.where_clause.is_some() {
+            return Err(Error::new(
+                Span::call_site(),
+                "`where` clause not supported for `#[extend]` inference",
+            ));
+        }
+
+        let ident = Ident::new("T_traitful_extend__", Span::call_site());
+        let mut params = trait_.generics.params.clone();
+
+        params.push(GenericParam::Type(TypeParam {
+            attrs: Vec::new(),
+            ident: ident.clone(),
+            colon_token: trait_.colon_token.clone(),
+            bounds: trait_.supertraits.clone(),
+            eq_token: None,
+            default: None,
+        }));
+
+        BoundGenericsType {
+            bound_generics: Some(params.into()),
+            type_: Type::Path(TypePath {
+                qself: None,
+                path: Path {
+                    leading_colon: None,
+                    segments: Punctuated::from_iter([PathSegment {
+                        ident,
+                        arguments: PathArguments::None,
+                    }]),
+                },
+            }),
+        }
+    } else {
+        syn::parse2(attr)?
+    };
     let generics = type_
         .bound_generics
         .clone()
@@ -33,7 +71,6 @@ pub(super) fn extend(
         items: Vec::new(),
     };
     let trait_ = {
-        let mut trait_: ItemTrait = syn::parse2(item)?;
         let ident = trait_.ident.clone();
 
         impl_.trait_ = Some((

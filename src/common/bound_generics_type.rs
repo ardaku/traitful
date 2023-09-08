@@ -1,7 +1,8 @@
+use proc_macro2::Span;
 use syn::{
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
-    token::For,
+    token::{For, Gt, Lt},
     GenericParam, Generics, Result, Token, Type,
 };
 
@@ -40,9 +41,26 @@ impl Parse for BoundGenerics {
     }
 }
 
+impl From<Punctuated<GenericParam, Token![,]>> for BoundGenerics {
+    fn from(params: Punctuated<GenericParam, Token![,]>) -> Self {
+        Self {
+            _for_token: For {
+                span: Span::call_site(),
+            },
+            lt_token: Lt {
+                spans: [Span::call_site()],
+            },
+            params,
+            gt_token: Gt {
+                spans: [Span::call_site()],
+            },
+        }
+    }
+}
+
 impl From<BoundGenerics> for Generics {
     fn from(bound_generics: BoundGenerics) -> Self {
-        Generics {
+        Self {
             lt_token: Some(bound_generics.lt_token),
             params: bound_generics.params,
             gt_token: Some(bound_generics.gt_token),
