@@ -30,7 +30,7 @@ pub(super) fn extend(
         params.push(GenericParam::Type(TypeParam {
             attrs: Vec::new(),
             ident: ident.clone(),
-            colon_token: trait_.colon_token.clone(),
+            colon_token: trait_.colon_token,
             bounds: trait_.supertraits.clone(),
             eq_token: None,
             default: None,

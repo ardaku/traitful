@@ -2,6 +2,12 @@
 
 #### A collection of helper macros for trait patterns
 
+[![Crates.io](https://img.shields.io/crates/v/traitful)](https://crates.io/crates/traitful)
+[![Crates.io](https://img.shields.io/crates/d/traitful)](https://crates.io/crates/traitful)
+[![Crates.io (recent)](https://img.shields.io/crates/dr/traitful)](https://crates.io/crates/traitful)  
+[![Crates.io](https://img.shields.io/crates/l/traitful)](https://github.com/ardaku/traitful/search?l=Text&q=license)
+[![Docs.rs](https://docs.rs/traitful/badge.svg)](https://docs.rs/traitful/)
+
 ## License
 Copyright © 2023 The Traitful Contributors.
 
