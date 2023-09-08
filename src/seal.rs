@@ -9,64 +9,10 @@ use syn::{
     TypeParamBound, TypePath,
 };
 
-use crate::common;
-
-struct BoundGenerics {
-    _for_token: Token![for],
-    _lt_token: Token![<],
-    generics: Punctuated<GenericParam, Token![,]>,
-    _gt_token: Token![>],
-}
-
-impl Parse for BoundGenerics {
-    fn parse(input: ParseStream<'_>) -> Result<Self> {
-        Ok(Self {
-            _for_token: input.parse()?,
-            _lt_token: input.parse()?,
-            generics: {
-                let mut generics = Punctuated::new();
-
-                while !input.peek(Token![>]) {
-                    let generic: GenericParam = input.parse()?;
-
-                    generics.push_value(generic);
-
-                    if input.peek(Token![>]) {
-                        break;
-                    }
-
-                    generics.push_punct(input.parse()?);
-                }
-
-                generics
-            },
-            _gt_token: input.parse()?,
-        })
-    }
-}
-
-struct AttrParam {
-    bound_generics: Option<BoundGenerics>,
-    type_: Type,
-}
-
-impl Parse for AttrParam {
-    fn parse(input: ParseStream<'_>) -> Result<Self> {
-        let lookahead = input.lookahead1();
-
-        Ok(Self {
-            bound_generics: if lookahead.peek(Token![for]) {
-                Some(BoundGenerics::parse(input)?)
-            } else {
-                None
-            },
-            type_: input.parse()?,
-        })
-    }
-}
+use crate::common::{self, BoundGenericsType};
 
 struct AttrParams {
-    types: Punctuated<AttrParam, Token![,]>,
+    types: Punctuated<BoundGenericsType, Token![,]>,
 }
 
 impl Parse for AttrParams {
@@ -198,8 +144,8 @@ pub(super) fn seal(
         };
 
         if let Some(generics) = param.bound_generics {
-            for generic in generics.generics {
-                generic_params.params.push(generic);
+            for param in generics.params {
+                generic_params.params.push(param);
             }
         }
 

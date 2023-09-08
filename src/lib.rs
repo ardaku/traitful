@@ -64,13 +64,13 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
     self::common::unwrap(self::seal::seal(attr.into(), item.into()))
 }
 
-/// Make a trait an extension of a struct's functionality.
+/// Make a trait an extension of a struct or another trait's functionality.
 ///
 /// # Extension Traits
 /// Extension traits are documented in [RFC-0445] as a way to extend
 /// functionality of structs defined in upstream crates.  The new methods are
 /// called "Extension methods".  This implementation enforces that extension
-/// traits are sealed.
+/// traits are [`#[seal]`](macro@seal)ed.
 ///
 /// ```rust
 /// # mod duration {
@@ -84,6 +84,15 @@ pub fn seal(attr: TokenStream, item: TokenStream) -> TokenStream {
 /// ```rust
 /// # mod shuffle {
 #[doc = include_str!("../examples/doc/shuffle.rs")]
+/// # }
+/// ```
+/// 
+/// ## Generics with `for` syntax
+/// You can also make extension traits on types with generics without adding
+/// them to the trait by using the `for` syntax.
+/// ```rust
+/// # mod iter_ext {
+#[doc = include_str!("../examples/doc/iter_ext.rs")]
 /// # }
 /// ```
 /// 

@@ -15,8 +15,3 @@ pub trait IteratorExt: Iterator {
         self.all(|x| x == first)
     }
 }
-
-fn main() {
-    assert!([4, 4, 4].into_iter().all_eq());
-    assert!(![4, 5, 4].into_iter().all_eq());
-}

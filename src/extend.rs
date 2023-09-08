@@ -3,18 +3,22 @@ use syn::{
     parse::Error,
     punctuated::Punctuated,
     token::{Brace, For, Gt, Impl, Lt},
-    AngleBracketedGenericArguments, Generics, ImplItem, ImplItemFn, ItemImpl,
-    ItemTrait, Path, PathArguments, PathSegment, Result, TraitItem, Type,
-    Visibility,
+    AngleBracketedGenericArguments, ImplItem, ImplItemFn, ItemImpl, ItemTrait,
+    Path, PathArguments, PathSegment, Result, TraitItem, Visibility,
 };
 
-use crate::common;
+use crate::common::{self, BoundGenericsType};
 
 pub(super) fn extend(
     attr: TokenStream,
     item: TokenStream,
 ) -> Result<TokenStream> {
-    let type_: Type = syn::parse2(attr)?;
+    let type_: BoundGenericsType = syn::parse2(attr)?;
+    let generics = type_
+        .bound_generics
+        .clone()
+        .map(From::from)
+        .unwrap_or_default();
     let mut impl_ = ItemImpl {
         attrs: Vec::new(),
         defaultness: None,
@@ -22,9 +26,9 @@ pub(super) fn extend(
         impl_token: Impl {
             span: Span::call_site(),
         },
-        generics: Generics::default(),
+        generics,
         trait_: None,
-        self_ty: Box::new(type_.clone()),
+        self_ty: Box::new(type_.type_.clone()),
         brace_token: Brace::default(),
         items: Vec::new(),
     };
@@ -91,10 +95,14 @@ pub(super) fn extend(
         trait_
     };
 
-    impl_.generics = trait_.generics.clone();
+    let params = impl_.generics.params.clone();
+
+    impl_.generics.params.extend(trait_.generics.params.clone());
+
+    let type_ = type_.type_;
 
     Ok(quote::quote! {
-        #[::traitful::seal(#type_)]
+        #[::traitful::seal(for<#params> #type_)]
         #trait_
 
         #impl_
