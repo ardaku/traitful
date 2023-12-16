@@ -118,6 +118,9 @@ pub(super) fn extend(
             };
             let sig = fn_.sig.clone();
 
+            fn_.attrs.push(syn::parse_quote!(#[allow(unused_variables)]));
+            fn_.default = Some(syn::parse_quote!({ unreachable!() }));
+
             common::remove_arg_patterns(&mut fn_.sig);
 
             impl_.items.push(ImplItem::Fn(ImplItemFn {

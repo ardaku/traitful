@@ -7,6 +7,7 @@ pub trait IteratorExt<T: Iterator> {
     fn all_eq(mut self) -> bool
     where
         T::Item: PartialEq,
+        Self: Sized,
     {
         let Some(first) = self.next() else {
             return true;
