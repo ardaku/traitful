@@ -4,27 +4,41 @@ All notable changes to `traitful` will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
+## [0.3.1] - Unreleased
+
+### Fixed
+
+ - Compiler error when both generics in `for` clause and on the trait definition
+
 ## [0.3.0] - 2023-12-16
+
 ### Changed
+
  - Extension trait methods now show up as "Provided methods" rather than
    "Required methods" in documentation
  - Extension traits no longer infer `Self: Sized` on methods that take `self` by
    value
 
 ## [0.2.1] - 2023-09-08
+
 ### Added
+
  - Support bounds on generics (`#[seal]`, `#[extend]`)
  - Support `for<>` syntax in `#[extend]`
  - Support `#[extend]` with no attribute params
 
 ## [0.2.0] - 2023-07-23
+
 ### Changed
+
  - `#[extend]` API to operate on traits rather than impls
  - Improved documentation for `#[extend]`
  - Improved documentation for `#[seal]`
 
 ## [0.1.0] - 2023-07-23
+
 ### Added
+
  - `#[seal]` attribute macro
  - `#[extend]` attribute macro
 

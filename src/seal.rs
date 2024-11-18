@@ -143,9 +143,12 @@ pub(super) fn seal(
             }
         }
 
+        for trait_generic in trait_generics.params.iter().cloned() {
+            generic_params.params.push(trait_generic);
+        }
+
         stream.extend(quote::quote! {
-            impl #generic_params #trait_generics super::Seal<#trait_args>
-                for #type_ {}
+            impl #generic_params super::Seal<#trait_args> for #type_ {}
         });
     }
 
