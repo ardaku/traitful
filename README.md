@@ -9,7 +9,7 @@
 [![Docs.rs](https://docs.rs/traitful/badge.svg)](https://docs.rs/traitful/)
 
 ## License
-Copyright © 2023 The Traitful Contributors.
+Copyright © 2023-2024 The Traitful Contributors.
 
 Licensed under any of
  - Apache License, Version 2.0, ([LICENSE\_APACHE] or
@@ -29,6 +29,6 @@ licensed as described above, without any additional terms or conditions.
 If you want help using or contributing to this library, feel free to send me an
 email at <aldaronlau@gmail.com>.
 
-[LICENSE\_APACHE]: https://github.com/ardaku/traitful/blob/stable/LICENSE_APACHE
-[LICENSE\_BOOST]: https://github.com/ardaku/traitful/blob/stable/LICENSE_BOOST
-[LICENSE\_MIT]: https://github.com/ardaku/traitful/blob/stable/LICENSE_MIT
+[LICENSE\_APACHE]: https://github.com/ardaku/traitful/blob/v0/LICENSE_APACHE
+[LICENSE\_BOOST]: https://github.com/ardaku/traitful/blob/v0/LICENSE_BOOST
+[LICENSE\_MIT]: https://github.com/ardaku/traitful/blob/v0/LICENSE_MIT
