@@ -118,12 +118,20 @@ pub(super) fn seal(
         },
     }));
 
+    let unobfuscated_trait_generics = trait_generics.clone();
+    let trait_generics = common::obfuscate_generics(trait_generics);
     let attr: AttrParams = syn::parse2(attr)?;
     let mut stream = TokenStream::new();
     let mut trait_args: Punctuated<GenericArgument, Comma> = Punctuated::new();
+    let mut unobfuscated_trait_args: Punctuated<GenericArgument, Comma> =
+        Punctuated::new();
 
     for trait_generic in trait_generics.params.iter().cloned() {
         trait_args.push(common::generic_arg(trait_generic));
+    }
+
+    for trait_generic in unobfuscated_trait_generics.params.iter().cloned() {
+        unobfuscated_trait_args.push(common::generic_arg(trait_generic));
     }
 
     for param in attr.types.into_iter() {
@@ -150,14 +158,15 @@ pub(super) fn seal(
         );
 
         generic_params.params.extend(
-            trait_generics
+            unobfuscated_trait_generics
                 .params
                 .iter()
                 .filter(|generic| !existing_params.contains(generic))
                 .cloned(),
         );
         stream.extend(quote::quote! {
-            impl #generic_params super::Seal<#trait_args> for #type_ {}
+            impl #generic_params super::Seal<#unobfuscated_trait_args>
+                for #type_ {}
         });
     }
 
@@ -166,10 +175,7 @@ pub(super) fn seal(
 
         seal_generics.params.push(GenericParam::Type(TypeParam {
             attrs: Vec::new(),
-            ident: proc_macro2::Ident::new(
-                "T_traitful_seal__",
-                Span::call_site(),
-            ),
+            ident: proc_macro2::Ident::new("T", Span::call_site()),
             colon_token: None,
             bounds: Punctuated::new(),
             eq_token: None,
@@ -189,11 +195,10 @@ pub(super) fn seal(
             #[doc(hidden)]
             pub trait Sealed #trait_generics {}
 
-            impl #seal_generics self::Sealed<#trait_args>
-                for T_traitful_seal__
-                where T_traitful_seal__: super::#trait_ident<#trait_args> {}
+            impl #seal_generics self::Sealed<#trait_args> for T
+                where T: super::#trait_ident<#trait_args> {}
 
-            mod impl_traitful_seal__ {
+            mod i {
                 pub use super::super::*;
 
                 #stream

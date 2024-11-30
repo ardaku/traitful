@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog], and this project adheres to
 
 ## [0.3.1] - Unreleased
 
+### Changed
+
+ - Obfuscate generics in implementation of `#[seal]`
+
 ### Fixed
 
  - Compiler error when both generics in `for` clause and on the trait definition
