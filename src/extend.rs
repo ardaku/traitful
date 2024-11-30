@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use proc_macro2::{Span, TokenStream};
 use syn::{
     parse::Error,
@@ -137,8 +139,16 @@ pub(super) fn extend(
     };
 
     let params = impl_.generics.params.clone();
+    let existing_params = HashSet::<GenericParam>::from_iter(params.clone());
 
-    impl_.generics.params.extend(trait_.generics.params.clone());
+    impl_.generics.params.extend(
+        trait_
+            .generics
+            .params
+            .iter()
+            .filter(|generic| !existing_params.contains(generic))
+            .cloned(),
+    );
 
     let type_ = type_.type_;
 

@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use proc_macro2::{Span, TokenStream};
 use syn::{
     parse::{Parse, ParseStream},
@@ -143,10 +145,17 @@ pub(super) fn seal(
             }
         }
 
-        for trait_generic in trait_generics.params.iter().cloned() {
-            generic_params.params.push(trait_generic);
-        }
+        let existing_params = HashSet::<GenericParam>::from_iter(
+            generic_params.params.iter().cloned(),
+        );
 
+        generic_params.params.extend(
+            trait_generics
+                .params
+                .iter()
+                .filter(|generic| !existing_params.contains(generic))
+                .cloned(),
+        );
         stream.extend(quote::quote! {
             impl #generic_params super::Seal<#trait_args> for #type_ {}
         });

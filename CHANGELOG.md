@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 ### Fixed
 
  - Compiler error when both generics in `for` clause and on the trait definition
+ - Compiler error for `#[extend]` with lifetimes
 
 ## [0.3.0] - 2023-12-16
 
