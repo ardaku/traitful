@@ -17,6 +17,9 @@ pub(super) fn extend(
     item: TokenStream,
 ) -> Result<TokenStream> {
     let mut trait_: ItemTrait = syn::parse2(item)?;
+    let unobfuscated_generics = trait_.generics.clone();
+
+    trait_.generics = common::obfuscate_generics(trait_.generics);
 
     let type_: BoundGenericsType = if attr.is_empty() {
         if trait_.generics.where_clause.is_some() {
@@ -26,18 +29,21 @@ pub(super) fn extend(
             ));
         }
 
-        let ident = Ident::new("T_traitful_extend__", Span::call_site());
+        let ident = Ident::new("T", Span::call_site());
         let mut params = trait_.generics.params.clone();
 
         params.push(GenericParam::Type(TypeParam {
             attrs: Vec::new(),
             ident: ident.clone(),
             colon_token: trait_.colon_token,
-            bounds: trait_.supertraits.clone(),
+            bounds: common::obfuscate_supertraits(
+                &trait_.supertraits,
+                &unobfuscated_generics.params,
+                &params,
+            ),
             eq_token: None,
             default: None,
         }));
-
         BoundGenericsType {
             bound_generics: Some(params.into()),
             type_: Type::Path(TypePath {
@@ -151,6 +157,12 @@ pub(super) fn extend(
     );
 
     let type_ = type_.type_;
+    let trait_ = {
+        let mut trait_ = trait_;
+
+        trait_.generics = unobfuscated_generics;
+        trait_
+    };
 
     Ok(quote::quote! {
         #[::traitful::seal(for<#params> #type_)]

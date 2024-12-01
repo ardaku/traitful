@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog], and this project adheres to
 ### Changed
 
  - Obfuscate generics in implementation of `#[seal]`
+ - Obfuscate generics in implementation of `#[extend]`
 
 ### Fixed
 
