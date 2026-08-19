@@ -1,9 +1,9 @@
 use proc_macro2::Span;
 use syn::{
+    GenericParam, Generics, Result, Token, Type,
     parse::{Parse, ParseStream},
     punctuated::Punctuated,
     token::{For, Gt, Lt},
-    GenericParam, Generics, Result, Token, Type,
 };
 
 #[derive(Clone)]

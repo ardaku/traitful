@@ -1,8 +1,8 @@
 use syn::{
-    punctuated::Punctuated,
-    token::{Comma, Plus},
     CapturedParam, Expr, GenericArgument, GenericParam, Ident, Lifetime, Path,
     PathArguments, ReturnType, Type, TypeParamBound,
+    punctuated::Punctuated,
+    token::{Comma, Plus},
 };
 
 pub(crate) fn obfuscate_supertraits(
@@ -30,20 +30,18 @@ pub(crate) fn obfuscate_supertraits(
                 TypeParamBound::PreciseCapture(ref mut pc) => {
                     for param in pc.params.iter_mut() {
                         match param {
-                            CapturedParam::Lifetime(ref mut lifetime) => {
+                            CapturedParam::Lifetime(lifetime) => {
                                 obfuscate_lifetime(
                                     lifetime,
                                     unobfuscated_generics,
                                     obfuscated_generics,
                                 )
                             }
-                            CapturedParam::Ident(ref mut ident) => {
-                                obfuscate_ident(
-                                    ident,
-                                    unobfuscated_generics,
-                                    obfuscated_generics,
-                                )
-                            }
+                            CapturedParam::Ident(ident) => obfuscate_ident(
+                                ident,
+                                unobfuscated_generics,
+                                obfuscated_generics,
+                            ),
                             _ => {}
                         }
                     }
@@ -106,19 +104,19 @@ fn obfuscate_generic(
     obfuscated_generics: &Punctuated<GenericParam, Comma>,
 ) {
     match generic {
-        GenericArgument::Lifetime(ref mut arg) => {
+        GenericArgument::Lifetime(arg) => {
             obfuscate_lifetime(arg, unobfuscated_generics, obfuscated_generics)
         }
-        GenericArgument::Type(ref mut arg) => {
+        GenericArgument::Type(arg) => {
             obfuscate_type(arg, unobfuscated_generics, obfuscated_generics);
         }
-        GenericArgument::Const(ref mut expr) => {
+        GenericArgument::Const(expr) => {
             // FIXME
             match expr {
                 Expr::Const(_) => unimplemented!("const expr unsupported"),
                 Expr::Array(_) => unimplemented!("const array unsupported"),
                 Expr::Paren(_) => unimplemented!("const paren unsupported"),
-                Expr::Path(ref mut path) => {
+                Expr::Path(path) => {
                     obfuscate_path(
                         &mut path.path,
                         unobfuscated_generics,
@@ -176,17 +174,17 @@ fn obfuscate_type(
     obfuscated_generics: &Punctuated<GenericParam, Comma>,
 ) {
     match ty {
-        Type::Array(ref mut inner) => obfuscate_type(
+        Type::Array(inner) => obfuscate_type(
             &mut inner.elem,
             unobfuscated_generics,
             obfuscated_generics,
         ),
-        Type::Slice(ref mut inner) => obfuscate_type(
+        Type::Slice(inner) => obfuscate_type(
             &mut inner.elem,
             unobfuscated_generics,
             obfuscated_generics,
         ),
-        Type::BareFn(ref mut bare_fn) => {
+        Type::BareFn(bare_fn) => {
             for arg in bare_fn.inputs.iter_mut() {
                 obfuscate_type(
                     &mut arg.ty,
@@ -199,35 +197,35 @@ fn obfuscate_type(
                 obfuscate_type(ty, unobfuscated_generics, obfuscated_generics);
             }
         }
-        Type::Group(ref mut group) => {
+        Type::Group(group) => {
             obfuscate_type(
                 &mut group.elem,
                 unobfuscated_generics,
                 obfuscated_generics,
             );
         }
-        Type::ImplTrait(ref mut impl_trait) => {
+        Type::ImplTrait(impl_trait) => {
             impl_trait.bounds = obfuscate_supertraits(
                 &impl_trait.bounds,
                 unobfuscated_generics,
                 obfuscated_generics,
             );
         }
-        Type::Paren(ref mut paren) => {
+        Type::Paren(paren) => {
             obfuscate_type(
                 &mut paren.elem,
                 unobfuscated_generics,
                 obfuscated_generics,
             );
         }
-        Type::Ptr(ref mut ptr) => {
+        Type::Ptr(ptr) => {
             obfuscate_type(
                 &mut ptr.elem,
                 unobfuscated_generics,
                 obfuscated_generics,
             );
         }
-        Type::Reference(ref mut reference) => {
+        Type::Reference(reference) => {
             if let Some(ref mut lifetime) = reference.lifetime {
                 obfuscate_lifetime(
                     lifetime,
@@ -242,7 +240,7 @@ fn obfuscate_type(
                 obfuscated_generics,
             );
         }
-        Type::Tuple(ref mut tuple) => {
+        Type::Tuple(tuple) => {
             for elem in tuple.elems.iter_mut() {
                 obfuscate_type(
                     elem,
@@ -251,14 +249,14 @@ fn obfuscate_type(
                 );
             }
         }
-        Type::TraitObject(ref mut object) => {
+        Type::TraitObject(object) => {
             object.bounds = obfuscate_supertraits(
                 &object.bounds,
                 unobfuscated_generics,
                 obfuscated_generics,
             );
         }
-        Type::Path(ref mut path) => {
+        Type::Path(path) => {
             obfuscate_path(
                 &mut path.path,
                 unobfuscated_generics,

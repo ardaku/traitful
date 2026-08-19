@@ -2,12 +2,12 @@ use std::collections::HashSet;
 
 use proc_macro2::{Span, TokenStream};
 use syn::{
-    parse::Error,
-    punctuated::Punctuated,
-    token::{Brace, For, Gt, Impl, Lt},
     AngleBracketedGenericArguments, GenericParam, Ident, ImplItem, ImplItemFn,
     ItemImpl, ItemTrait, Path, PathArguments, PathSegment, Result, TraitItem,
     Type, TypeParam, TypePath, Visibility,
+    parse::Error,
+    punctuated::Punctuated,
+    token::{Brace, For, Gt, Impl, Lt},
 };
 
 use crate::common::{self, BoundGenericsType};
@@ -115,7 +115,7 @@ pub(super) fn extend(
         ));
 
         for item in trait_.items.iter_mut() {
-            let TraitItem::Fn(ref mut fn_) = item else {
+            let TraitItem::Fn(fn_) = item else {
                 continue;
             };
             let Some(block) = fn_.default.take() else {

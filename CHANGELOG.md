@@ -4,10 +4,12 @@ All notable changes to `traitful` will be documented in this file.
 The format is based on [Keep a Changelog], and this project adheres to
 [Semantic Versioning].
 
-## [0.3.1] - Unreleased
+## [0.4.0] - Unreleased
 
 ### Changed
 
+ - Bump MSRV to 1.91
+ - Upgrade to the 2024 edition
  - Obfuscate generics in implementation of `#[seal]`
  - Obfuscate generics in implementation of `#[extend]`
 

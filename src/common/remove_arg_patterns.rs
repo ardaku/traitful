@@ -4,12 +4,12 @@ use syn::{FnArg, Pat, Signature};
 pub(crate) fn remove_arg_patterns(signature: &mut Signature) {
     for arg in signature.inputs.iter_mut() {
         match arg {
-            FnArg::Receiver(ref mut receiver) => {
+            FnArg::Receiver(receiver) => {
                 if receiver.reference.is_none() {
                     receiver.mutability = None;
                 }
             }
-            FnArg::Typed(ref mut typed) => remove_pat_patterns(&mut typed.pat),
+            FnArg::Typed(typed) => remove_pat_patterns(&mut typed.pat),
         }
     }
 }

@@ -1,6 +1,6 @@
 use syn::{
-    punctuated::Punctuated, Expr, ExprPath, GenericArgument, GenericParam,
-    Path, PathArguments, PathSegment, Type, TypePath,
+    Expr, ExprPath, GenericArgument, GenericParam, Path, PathArguments,
+    PathSegment, Type, TypePath, punctuated::Punctuated,
 };
 
 /// Create a generic argument from a generic parameter.

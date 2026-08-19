@@ -2,13 +2,13 @@ use std::collections::HashSet;
 
 use proc_macro2::{Span, TokenStream};
 use syn::{
-    parse::{Parse, ParseStream},
-    punctuated::Punctuated,
-    token::{Comma, Gt, Lt},
     AngleBracketedGenericArguments, Expr, ExprPath, GenericArgument,
     GenericParam, Generics, ItemTrait, Path, PathArguments, PathSegment,
     Result, Token, TraitBound, TraitBoundModifier, Type, TypeParam,
     TypeParamBound, TypePath,
+    parse::{Parse, ParseStream},
+    punctuated::Punctuated,
+    token::{Comma, Gt, Lt},
 };
 
 use crate::common::{self, BoundGenericsType};
