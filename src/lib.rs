@@ -1,4 +1,4 @@
-//! #### A collection of helper macros for trait patterns
+//! A collection of helper macros for trait patterns
 
 #![doc(
     html_logo_url = "https://ardaku.github.io/mm/logo.svg",
